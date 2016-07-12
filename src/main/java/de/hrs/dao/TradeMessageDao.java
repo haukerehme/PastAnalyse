@@ -1,6 +1,8 @@
 package de.hrs.dao;
 
 import de.hrs.model.TradeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,6 +16,8 @@ import java.util.Date;
  */
 @Repository
 public class TradeMessageDao {
+    public static Logger log = LoggerFactory.getLogger(TradeMessageDao.class);
+
     private JdbcTemplate template;
 
     @Autowired
@@ -23,8 +27,8 @@ public class TradeMessageDao {
     }
 
     private static final String insertSql =
-            "Replace INTO TradeMessageTest (" +
-                    " timestamp, " +
+            "Replace INTO TradeMessageTest ( " +
+                    "timestamp, " +
                     "instrument, " +
                     "timeperiod, " +
                     "anzFound, " +
@@ -40,7 +44,9 @@ public class TradeMessageDao {
                     "shortWinVeryHigh, " +
                     "shortLose, " +
                     "shortLoseHigh, " +
-                    "insertedDate) " + "VALUES (?, ?, ?, ?, " +
+                    "insertedDate) " + "VALUES (" +
+                    "?, ?, ?, ?, " +
+                    "?, " +
                     "?, " +
                     "?, " +
                     "?, " +
@@ -94,6 +100,7 @@ public class TradeMessageDao {
                 Types.DATE
         };
         int row = template.update(insertSql, params, types);
+        log.info("Insert row for Dat{}", tradeMessage.getTimestamp());
     }
 
 }

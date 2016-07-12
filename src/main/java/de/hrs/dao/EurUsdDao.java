@@ -1,6 +1,7 @@
 package de.hrs.dao;
 
 import de.hrs.model.Eurusd;
+import de.hrs.model.EurusdDiff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.DataSourceFactory;
@@ -29,7 +30,7 @@ public class EurUsdDao {
     }
 
     public Eurusd findLastEntry() {
-        String sql = "Select * from eurusd where zeit = (Select max(zeit) from eurusd)";
+        String sql = "Select * from eurusdTest where zeit = (Select max(zeit) from eurusdTest)";
 
         List<Eurusd> eurusdList = new ArrayList<Eurusd>();
 
@@ -42,7 +43,7 @@ public class EurUsdDao {
     }
 
     public Eurusd findFirstEntry() {
-        String sql = "Select * from eurusd where zeit = (Select min(zeit) from eurusd)";
+        String sql = "Select * from eurusdTest where zeit = (Select min(zeit) from eurusdTest)";
 
         List<Eurusd> eurusdList = new ArrayList<Eurusd>();
 
@@ -55,7 +56,7 @@ public class EurUsdDao {
     }
 
     public List<Integer> findAllDifferences(Timestamp von, Timestamp bis) {
-        String sql = "SELECT * FROM eurusd where zeit > ? AND zeit < ? order by zeit ASC";
+        String sql = "SELECT * FROM eurusdTest where zeit > ? AND zeit < ? order by zeit ASC";
 
         List<Integer> eurusdList = new ArrayList<Integer>();
         double wertNeu;
@@ -72,6 +73,43 @@ public class EurUsdDao {
             diff = (int) (10000 * wertNeu - 10000 * wertAlt);
             eurusdList.add(diff);
             wertAlt = wertNeu;
+        }
+        return eurusdList;
+    }
+
+    public List<EurusdDiff> findAllDifferencesWithTimestamp(Timestamp von, Timestamp bis) {
+        String sql = "SELECT *, (\n" +
+                "DAYNAME( DATE( zeit ) ) =  \"sunday\"\n" +
+                "OR DAYNAME( DATE( zeit ) ) =  \"saturday\"\n" +
+                "OR TIME( zeit ) > '21:00:00'\n" +
+                "OR TIME( zeit ) < '07:00:00'\n" +
+                ") AS pause" +
+                " FROM eurusdTest where zeit > ? AND zeit < ? order by zeit ASC";
+
+        List<EurusdDiff> eurusdList = new ArrayList<EurusdDiff>();
+        double wertNeu;
+        int diff;
+        Object[] params = new Object[] { von, bis};
+        int[] types = new int[] { Types.TIMESTAMP, Types.TIMESTAMP};
+
+        List<Map<String, Object>> rows = template.queryForList(sql,params,types);
+
+        double wertAlt = (Double) rows.get(0).get("wert");
+        boolean tradeable;
+        int i = 0;
+
+        for (Map row : rows) {
+            wertNeu = (Double) row.get("wert");
+            diff = (int) (10000 * wertNeu - 10000 * wertAlt);
+
+            if((Long) rows.get(i).get("pause") > 0){
+                tradeable = false;
+            }else{
+                tradeable = true;
+            }
+            eurusdList.add(new EurusdDiff(diff, (Timestamp) rows.get(i).get("zeit"), tradeable));
+            wertAlt = wertNeu;
+            i++;
         }
         return eurusdList;
     }
