@@ -32,7 +32,7 @@ public class Main {
             int dayOfYear = randBetween(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
             gc.set(gc.DAY_OF_YEAR, dayOfYear);
 
-            context.getBean(Analyse.class).startAnalyse(new Timestamp(gc.getTime()));
+            context.getBean(Analyse.class).startAnalyse(new Timestamp(gc.getTime().getTime()));
 
 //            System.out.println(gc.get(gc.YEAR) + "-" + (gc.get(gc.MONTH) + 1) + "-" + gc.get(gc.DAY_OF_MONTH));
 //
