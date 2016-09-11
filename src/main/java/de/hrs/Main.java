@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
 /**
  * Created by hrs on 18.06.16.
@@ -25,7 +26,21 @@ public class Main {
             Timestamp timestamp = new Timestamp(dateFormat.parse(args[0]).getTime());
             context.getBean(Analyse.class).startAnalyse(timestamp);
         }else{
-            System.out.println("Bitte geben Sie die einen oder zwei Parameter an");
+            GregorianCalendar gc = new GregorianCalendar();
+            int year = randBetween(2009, 2015);
+            gc.set(gc.YEAR, year);
+            int dayOfYear = randBetween(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
+            gc.set(gc.DAY_OF_YEAR, dayOfYear);
+
+            context.getBean(Analyse.class).startAnalyse(new Timestamo(gc.getTime()));
+
+//            System.out.println(gc.get(gc.YEAR) + "-" + (gc.get(gc.MONTH) + 1) + "-" + gc.get(gc.DAY_OF_MONTH));
+//
+//            System.out.println("Bitte geben Sie einen oder zwei Parameter an");
         }
+    }
+
+    public static int randBetween(int start, int end) {
+        return start + (int)Math.round(Math.random() * (end - start));
     }
 }
