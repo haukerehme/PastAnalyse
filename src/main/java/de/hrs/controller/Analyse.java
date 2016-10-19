@@ -2,6 +2,7 @@ package de.hrs.controller;
 
 import de.hrs.Rechner.AnalyseMehereVergleichsstrecken;
 import de.hrs.dao.EurUsdDao;
+import de.hrs.dao.TradeMessageDao;
 import de.hrs.model.Eurusd;
 import de.hrs.model.EurusdDiff;
 import org.slf4j.Logger;
@@ -19,10 +20,10 @@ import java.util.List;
 public class Analyse {
 
     @Resource
-    EurUsdDao eurUsdDao;
+    TradeMessageDao tradeMessageDao;
 
     @Resource
-    AnalyseMehereVergleichsstrecken analyseMehereVergleichsstrecken;
+    EurUsdDao eurUsdDao;
 
     public static Logger log = LoggerFactory.getLogger(Analyse.class);
 
@@ -40,19 +41,18 @@ public class Analyse {
 
     private void analyse(List<Integer> eurusdListPast, List<EurusdDiff> eurusdListFuture){
         int auswertungslaenge = 20;
-        AnalyseMehereVergleichsstrecken analyse = new AnalyseMehereVergleichsstrecken();
+        AnalyseMehereVergleichsstrecken analyse;
 //        for(EurusdDiff newValue : eurusdListFuture.subList(0,eurusdListFuture.size()-(auswertungslaenge+1))) {
         for (int i = 0; i < eurusdListFuture.size()-(30+1); i++){
             //ToDo: Check if Weekend or night
             if (eurusdListFuture.get(i).isTradeable()) {
                 log.info("Analysiere {}", eurusdListFuture.get(i).getTimestamp());
-                analyseMehereVergleichsstrecken.setNow(eurusdListFuture.get(i).getTimestamp());
-                analyseMehereVergleichsstrecken.setClosewerte(eurusdListPast);
-                analyseMehereVergleichsstrecken.setAusgangspkt(eurusdListPast.size() - 1);
-                analyseMehereVergleichsstrecken.setAuswertungslaenge(auswertungslaenge);
-                analyseMehereVergleichsstrecken.setSpread(1);
-                analyseMehereVergleichsstrecken.setInstrument("EUR/USD");
-                analyseMehereVergleichsstrecken.run();
+                analyse  = new AnalyseMehereVergleichsstrecken(eurusdListFuture.get(i).getTimestamp(),
+                        eurusdListPast,eurusdListPast.size() - 1,
+                        auswertungslaenge, 1, "EUR/USD"
+                        );
+                analyse.run();
+                tradeMessageDao.persist(analyse.getTradeMessage());
             }else{
                 log.info("Überspringe {}", eurusdListFuture.get(i).getTimestamp());
             }
