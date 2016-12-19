@@ -1,19 +1,14 @@
 package de.hrs.Rechner;
 
-import de.hrs.dao.TradeMessageDao;
 import de.hrs.model.TradeMessage;
 import de.hrs.model.Tradevorhersage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Created by hrs on 21.06.16.

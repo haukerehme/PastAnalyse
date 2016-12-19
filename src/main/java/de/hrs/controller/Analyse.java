@@ -2,15 +2,14 @@ package de.hrs.controller;
 
 import de.hrs.Rechner.AnalyseMehereVergleichsstrecken;
 import de.hrs.dao.EurUsdDao;
-import de.hrs.dao.TradeMessageDao;
-import de.hrs.model.Eurusd;
+import de.hrs.dao.EurUsdRepository;
+import de.hrs.dao.TradeMessageRepository;
 import de.hrs.model.EurusdDiff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,7 +19,10 @@ import java.util.List;
 public class Analyse {
 
     @Resource
-    TradeMessageDao tradeMessageDao;
+    EurUsdRepository eurUsdRepository;
+
+    @Resource
+    TradeMessageRepository tradeMessageRepository;
 
     @Resource
     EurUsdDao eurUsdDao;
@@ -52,7 +54,7 @@ public class Analyse {
                         auswertungslaenge, 1, "EUR/USD"
                         );
                 analyse.run();
-                tradeMessageDao.persist(analyse.getTradeMessage());
+                tradeMessageRepository.save(analyse.getTradeMessage());
             }else{
                 log.info("Überspringe {}", eurusdListFuture.get(i).getTimestamp());
             }

@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by hrs on 18.06.16.
  */
-@Entity
+@Entity(name="eurusdtest")
 public class Eurusd {
 
     @Id
@@ -17,14 +17,14 @@ public class Eurusd {
     Timestamp zeit;
 
     @Column(nullable = false)
-    double value;
+    double wert;
 
     public Eurusd() {
     }
 
-    public Eurusd(Timestamp zeit, double value) {
+    public Eurusd(Timestamp zeit, double wert) {
         this.zeit = zeit;
-        this.value = value;
+        this.wert = wert;
     }
 
     public Timestamp getZeit() {
@@ -35,19 +35,11 @@ public class Eurusd {
         this.zeit = zeit;
     }
 
-    public double getValue() {
-        return value;
+    public double getWert() {
+        return wert;
     }
 
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return "Eurusd{" +
-                "zeit=" + zeit +
-                ", value=" + value +
-                '}';
+    public void setWert(double wert) {
+        this.wert = wert;
     }
 }

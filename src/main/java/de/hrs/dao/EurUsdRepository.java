@@ -1,37 +1,22 @@
 package de.hrs.dao;
 
 import de.hrs.model.Eurusd;
-import de.hrs.model.EurusdDiff;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.DataSourceFactory;
-import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Created by hrs on 18.06.16.
+ * Created by hrs on 18.12.16.
  */
-@Repository
-public class EurUsdDao {
-    private JdbcTemplate template;
-    private String string;
+@Transactional
+public interface EurUsdRepository extends JpaRepository<Eurusd,Timestamp> {
 
-    @Autowired
-    private void setDataSource(DataSource dataSource) {
-        DataSource dataSource1 = dataSource;
-        this.template = new JdbcTemplate(dataSource);
-    }
-
-    public Eurusd findLastEntry() {
-        String sql = "Select * from eurusdtest where zeit = (Select max(zeit) from eurusdtest)";
+    /*public Eurusd findLastEntry() {
+        String sql = "Select * from eurusdTest where zeit = (Select max(zeit) from eurusdTest)";
 
         List<Eurusd> eurusdList = new ArrayList<Eurusd>();
 
@@ -44,7 +29,7 @@ public class EurUsdDao {
     }
 
     public Eurusd findFirstEntry() {
-        String sql = "Select * from eurusdtest where zeit = (Select min(zeit) from eurusdtest)";
+        String sql = "Select * from eurusdTest where zeit = (Select min(zeit) from eurusdTest)";
 
         List<Eurusd> eurusdList = new ArrayList<Eurusd>();
 
@@ -57,7 +42,7 @@ public class EurUsdDao {
     }
 
     public List<Integer> findAllDifferences(Timestamp von, Timestamp bis) {
-        String sql = string;
+        String sql = "SELECT * FROM eurusdTest where zeit > ? AND zeit < ? order by zeit ASC";
 
         List<Integer> eurusdList = new ArrayList<Integer>();
         double wertNeu;
@@ -85,7 +70,7 @@ public class EurUsdDao {
                 "OR TIME( zeit ) > '21:00:00'\n" +
                 "OR TIME( zeit ) < '07:00:00'\n" +
                 ") AS pause" +
-                " FROM eurusdtest where zeit > ? AND zeit < ? order by zeit ASC";
+                " FROM eurusdTest where zeit > ? AND zeit < ? order by zeit ASC";
 
         List<EurusdDiff> eurusdList = new ArrayList<EurusdDiff>();
         double wertNeu;
@@ -113,5 +98,5 @@ public class EurUsdDao {
             i++;
         }
         return eurusdList;
-    }
+    }*/
 }
